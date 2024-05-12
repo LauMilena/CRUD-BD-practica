@@ -28,7 +28,12 @@ module.exports = function (sequelize,DataTypes){
     }
 
     const Generos = sequelize.define(alias, cols, config);
-
+    Generos.associate = function(models){
+        Generos.hasMany(models.Peliculas,{
+            as:"peliculas",
+            foreignKey:"genre_id"
+        })
+    }
     return Generos;
 }
 

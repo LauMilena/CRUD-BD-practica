@@ -12,7 +12,12 @@ let moviesController = {
     }, 
 
     detail: function (req, res){
-        db.Peliculas.findByPk(req.params.id)
+        db.Peliculas.findByPk(req.params.id,
+            {
+                include:[
+                    {association:"genre"}
+                ]}
+        )
         .then (function(movie){
             res.render('moviesDetail', {movie:movie})
         })
@@ -31,9 +36,10 @@ let moviesController = {
     }, 
 
     add: function (req,res){
-        db.Peliculas.findAll()
-            .then (function (movies){
-                res.render ('moviesAdd',{movies})
+        Promise.all([db.Peliculas.findAll(),
+            db.Generos.findAll()])
+            .then (function ([movies, genres]){
+                res.render ('moviesAdd',{movies:movies, genres:genres})
             } )
 
         },
@@ -43,23 +49,22 @@ let moviesController = {
         res.redirect('/movies/detail/' + newMovie.id)
     },
 
-    edit: async function (req,res){
-        try{
-            let Movie = await peliculasService.getOneMovie(req.params.id)
-            res.render ('moviesEdit',{ Movie : Movie })
-            console.log(Movie);
-        }
-        catch (error){
-            res.send ('Pelicula no recuperada')
-        } 
-        
+    edit: function (req, res){
+        let pedidoMovie = db.Peliculas.findByPk(req.params.id);
+        let pedidoGenre = db.Generos.findAll();
 
+        Promise.all([pedidoMovie, pedidoGenre])
+        .then(function([pelicula, genres]){
+            res.render('moviesEdit', {Movie:pelicula, genres:genres})
+        })
     },
 
     update: async function (req,res){
             try{
-                let updatedMovie = await peliculasService.editMovie(req.body, req.params.id)
-                return res.redirect ('/movies/detail/'+ updatedMovie.id, {Movie})
+                //console.log(req.body);
+                //console.log(req.params.id);
+                await peliculasService.editMovie(req.body, req.params.id)
+                return res.redirect ('/movies')
             }
             catch (error) {
                 res.send ('Error al editar')
@@ -78,6 +83,22 @@ let moviesController = {
             .then(function(movies){
                 res.render('recommendedMovies',{movies})
             })
+    },
+
+    delete: async function (req, res) {
+        db.Peliculas.findByPk(req.params.id)
+        .then (function(Movie){
+            res.render('moviesDelete', {Movie})
+        })
+    },
+
+    destroy: async function (req,res){
+        try {
+            await peliculasService.destroyMovie(req.params.id)
+            res.redirect('/movies')
+        } catch (error) {
+            res.send ('No se pudo eliminar')
+        }
     }
 }
 

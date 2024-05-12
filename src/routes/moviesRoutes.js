@@ -17,13 +17,13 @@ router.post('/', moviesController.create);
 
 // /*-- Edicion --*/
 router.get('/edit/:id', moviesController.edit);
-// router.???('', moviesController.update);
+router.put('/update/:id', moviesController.update);
 
 /* -- Recomendados --*/
 router.get('/recommended', moviesController.recommended);
 
 // /* -- Borrado --*/
-// router.???('', moviesController.delete);
-// router.???('', moviesController.destroy);
+router.get('/delete/:id', moviesController.delete);
+router.delete('/:id', moviesController.destroy);
 
 module.exports = router;

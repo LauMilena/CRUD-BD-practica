@@ -32,7 +32,13 @@ module.exports = function (sequelize,DataTypes){
     }
 
     const Actores = sequelize.define(alias, cols, config);
-
+    Actores.associate = function(models){
+        Actores.hasMany(models.ActorMovie,{
+            as:"actorMovies",
+            foreignKey:"actor_id",
+        })
+    }
+    
     return Actores;
 }
 

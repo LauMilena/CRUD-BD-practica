@@ -11,15 +11,24 @@
     <figure>
         <img src="/img/logo-DH.png" alt="Logo Digital House">
     </figure>
-    <h1><%= movie.title %> </h1>    
+    <h1><%= movie.title %> </h1>   
+    <br>
+    <a href="/movies"><button type="submit">Volver al listado de peliculas </button></a> 
     <br>
     <p>RATING: <%= movie.rating %> </p>
     <p>AWARDS: <%= movie.awards %> </p>
     <p>LENGTH: <%= movie.length + ' min'%> </p>
     <p>RELEASE DATE: <%= movie.release_date %> </p>
-    <p>Genre: <%= movie.genre_id%> </p>
+    <%if (movie.genre_id){%>
+    <p>Genre: <%=movie.genre.name%> </p>
+    <%} else {%>
+    <p> Genre: No hay genero especificado </p>
+    <%}%>
 
     <a href="/movies/edit/<%=movie.id%>"><button type="submit">Editar pelicula</button></a>
+
+    <a href="/movies/delete/<%=movie.id%>"><button type="submit">Borrar pelicula</button></a>
+    <p> <a href="/movies/add"><button class="botonBorrar" type="submit">Agregar pelicula</button></a>
 
 </body>
 </html>

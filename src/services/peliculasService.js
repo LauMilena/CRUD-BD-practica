@@ -17,39 +17,33 @@ createNew: async function (body){
                 catch(error){
                 console.log(error)
             }
-    }, 
-
-    getOneMovie: async function (id){
-        try{
-            await db.Peliculas.findByPk(id)
-        }
-        catch (error){
-            console.log(error);
-            return {
-                id:0,
-                title:'No encontrado',
-                rating: 0,
-                awards: 0,
-                release_date: ""
-            }
-        }
     },
 
-
-    editMovie: async function (id,body){
+    editMovie: async function (body, id){
         try{
-        let editedMovie = new Pelicula (body)
-        return db.Peliculas.update(editedMovie,{
-            where: {id:id}
-        })
+            //console.log(id);
+            //console.log(body);
+        let editedMovie = new Pelicula (body);
+        //console.log(Pelicula(body));
+        await db.Peliculas.update(editedMovie,{where: {id:id}});
     }
-    catch (err){
+    catch (error){
         console.log(error);
         return ('no se pudo actualizar')
     }
 
+},
+    destroyMovie: async function(id){
+        await db.ActorMovies.destroy({
+            where:{movie_id:id},
+    });
+
+        await db.Peliculas.destroy({
+            where:{id:movie_id}
+        })
 }
 }
+
 
 function Pelicula({title, rating, awards, release_date, length, genre_id}){
     this.title = title;
